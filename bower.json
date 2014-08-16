@@ -1,0 +1,22 @@
+{
+  "name": "purescript-test",
+  "version": "0.0.1",
+  "authors": [
+    "Josh Bassett <josh.bassett@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "purescript-random": "~0.1.1",
+    "purescript-control": "~0.2.0",
+    "purescript-tuples": "~0.2.0",
+    "purescript-foldable-traversable": "~0.1.3"
+  }
+}

@@ -4,30 +4,29 @@ import Control.Monad.Eff
 import Debug.Trace
 
 foreign import data Random :: !
+foreign import data Timer  :: !
 
 foreign import random
   "function random(f) {\
-  \  return f(Math.random());\
-  \}" :: forall eff a.
+  \  return function() {\
+  \    return f(Math.random())();\
+  \  };\
+  \}" :: forall a eff.
          (Number -> Eff eff a) ->
          Eff (random :: Random | eff) Unit
-
-foreign import data Timer   :: !
-foreign import data Timeout :: *
 
 foreign import timeout
   "function timeout(time) {\
   \  return function(fn) {\
   \    return function() {\
-  \      return setTimeout(fn, time);\
+  \      setTimeout(fn, time);\
   \    };\
   \  };\
   \}" :: forall a eff.
-          Number ->
-          (Eff (timer :: Timer | eff) a) ->
-          Eff (timer :: Timer | eff) Timeout
+         Number ->
+         Eff (timer :: Timer | eff) a ->
+         Eff (timer :: Timer | eff) Unit
 
-main = do
-  timeout 100 $ do
-    random print
-    main
+main = timeout 10 $ do
+  random print
+  main

@@ -2,5 +2,4 @@ module Example1 where
 
 import Debug.Trace
 
-main =
-  print "hello world"
+main = print "hello world"

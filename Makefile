@@ -1,7 +1,7 @@
 sources    = $(wildcard Example*.purs)
 objects    = $(patsubst %.purs, build/%.js, $(sources))
 examples   = $(patsubst %.purs, %, $(sources))
-components = $(shell find bower_components -type f -name '*.purs')
+components = $(shell find bower_components -type f \( -name '*.purs' -and \! -path '*examples*' \))
 
 .PHONY: all clean
 

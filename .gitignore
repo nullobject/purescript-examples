@@ -1,4 +1,2 @@
-.psci
-.psci_modules
 bower_components
-build
+output

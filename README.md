@@ -3,5 +3,5 @@
 To run an example:
 
 ```
-> make Example1
+> pulp run -m Example1
 ```

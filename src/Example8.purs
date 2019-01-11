@@ -5,13 +5,13 @@ import Effect (Effect)
 import Effect.Console (logShow)
 import Effect.Ref as Ref
 import Prelude
-import Signal (Signal(..), runSignal)
+import Signal (Signal, mkSignal, runSignal)
 import Signal.Timer (interval)
 
-callCC :: forall r m a b. (Monad m) => ((a -> Signal r m b) -> Signal r m a) -> Signal r m a
-callCC f = Signal (\k -> runSignal (f (\a -> Signal (\_ -> k a))) k)
+callCC :: forall a b. ((a -> Signal b) -> Signal a) -> Signal a
+callCC f = mkSignal (\k -> runSignal (f (\a -> mkSignal (\_ -> k a))) k)
 
-scan :: forall r a b. (b -> a -> b) -> b -> Signal r Effect a -> Signal r Effect b
+scan :: forall a b. (b -> a -> b) -> b -> Signal a -> Signal b
 scan f x s = do
   current <- lift $ Ref.new x
   callCC $ \k -> do

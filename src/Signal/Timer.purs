@@ -1,12 +1,11 @@
 module Signal.Timer where
 
 import Data.Function.Uncurried (Fn2, runFn2)
-import Effect (Effect)
-import Signal (Signal(..), SignalConstructor)
+import Signal (Signal, SignalConstructor, mkSignal)
 
-foreign import timer :: forall r. Int -> Signal r Effect Number
+foreign import timer :: Int -> Signal Number
 
-foreign import intervalImpl :: forall r m a. Fn2 (SignalConstructor r m a) Int (Signal r m a)
+foreign import intervalImpl :: forall a. Fn2 (SignalConstructor a) Int (Signal a)
 
-interval :: forall r m. Int -> Signal r m Number
-interval = runFn2 intervalImpl Signal
+interval :: Int -> Signal Number
+interval = runFn2 intervalImpl mkSignal

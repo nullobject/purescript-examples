@@ -1,10 +1,11 @@
 module Example8 where
 
+import Prelude
+
 import Control.Monad.Trans.Class (lift)
 import Effect (Effect)
 import Effect.Console (logShow)
 import Effect.Ref as Ref
-import Prelude
 import Signal (Signal, mkSignal, runSignal)
 import Signal.Timer (interval)
 

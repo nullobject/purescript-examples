@@ -1,8 +1,9 @@
 module Example6 where
 
+import Prelude
+
 import Effect (Effect)
 import Effect.Console (logShow)
-import Prelude
 import Signal (runSignal)
 import Signal.Timer (timer)
 

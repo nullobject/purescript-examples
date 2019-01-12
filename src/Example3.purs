@@ -1,9 +1,10 @@
 module Example3 where
 
+import Prelude
+
 import Data.Tuple (Tuple(..), fst)
 import Effect (Effect)
 import Effect.Console (logShow)
-import Prelude
 
 -- Represents a signal function.
 data SF a b =

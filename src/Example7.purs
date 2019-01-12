@@ -1,11 +1,12 @@
 module Example7 where
 
+import Prelude
+
 import Control.Monad.State (State, runState)
 import Control.Monad.State.Class (modify)
 import Data.Tuple (Tuple(..))
 import Effect (Effect)
 import Effect.Console (log)
-import Prelude
 
 incState :: State Int Unit
 incState = void $ modify (_ * 2)

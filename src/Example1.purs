@@ -1,8 +1,9 @@
 module Example1 where
 
+import Prelude
+
 import Effect (Effect)
 import Effect.Console (log)
-import Prelude (Unit)
 
 main :: Effect Unit
 main = do

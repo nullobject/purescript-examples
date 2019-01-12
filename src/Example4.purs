@@ -1,8 +1,9 @@
 module Example4 where
 
+import Prelude
+
 import Effect (Effect)
 import Effect.Console (logShow)
-import Prelude
 
 -- Represents a signal.
 data Signal a = Signal a

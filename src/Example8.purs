@@ -6,11 +6,8 @@ import Control.Monad.Trans.Class (lift)
 import Effect (Effect)
 import Effect.Console (logShow)
 import Effect.Ref as Ref
-import Signal (Signal, mkSignal, runSignal)
+import Signal (Signal, callCC, runSignal)
 import Signal.Timer (interval)
-
-callCC :: forall a b. ((a -> Signal b) -> Signal a) -> Signal a
-callCC f = mkSignal (\k -> runSignal (f (\a -> mkSignal (\_ -> k a))) k)
 
 scan :: forall a b. (b -> a -> b) -> b -> Signal a -> Signal b
 scan f x s = do

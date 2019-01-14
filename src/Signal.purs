@@ -4,13 +4,14 @@ import Control.Monad.Trans.Class (class MonadTrans)
 import Effect (Effect)
 import Prelude
 
----- Represents a signal.
-----
----- The type parameter `r` is the return type of the monad `m`. The callback
----- function takes a parameter `a`.
-newtype SignalT r m a = SignalT (Callback r m a -> m r)
+-- | Represents a signal.
+-- |
+-- | The type parameter `r` is the return type of the monad `m`. The callback
+-- | function takes a parameter `a`.
+-- |
+-- | This is based on the continuation monad.
+newtype SignalT a m r = SignalT ((r -> m a) -> m a)
 
-type Callback r m a = (a -> m r)
 type Signal a = SignalT Unit Effect a
 type SignalConstructor a = (((a -> Effect Unit) -> Effect Unit) -> Signal a)
 
@@ -31,10 +32,9 @@ instance monadSignal :: (Monad m) => Monad (SignalT r m)
 instance monadTransSignal :: MonadTrans (SignalT r) where
   lift m = SignalT (\k -> m >>= k)
 
--- Creates a new signal from a signal function.
-mkSignal :: forall a. SignalConstructor a
-mkSignal = SignalT
-
 -- Runs a signal with a given callback function.
-runSignal :: forall r m a. (Monad m) => SignalT r m a -> Callback r m a -> m r
+runSignal :: forall a m r. (Monad m) => SignalT a m r -> (r -> m a) -> m a
 runSignal (SignalT sf) f = sf f
+
+callCC :: forall a b. ((a -> Signal b) -> Signal a) -> Signal a
+callCC f = SignalT (\k -> runSignal (f (\a -> SignalT (\_ -> k a))) k)

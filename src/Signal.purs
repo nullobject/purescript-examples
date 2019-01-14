@@ -19,29 +19,29 @@ import Effect (Effect)
 -- |
 -- | The type parameter `r` is the return type of the monad `m`. The callback
 -- | function takes a parameter `a`.
-newtype SignalT a m r = SignalT ((r -> m a) -> m a)
+newtype SignalT r m a = SignalT ((a -> m r) -> m r)
 
 type Signal a = SignalT Unit Effect a
-type SignalConstructor a = (((a -> Effect Unit) -> Effect Unit) -> Signal a)
+type SignalConstructor a = ((a -> Effect Unit) -> Effect Unit) -> Signal a
 
 -- Runs a signal with a given callback function.
-runSignal :: forall a m r. (Monad m) => SignalT a m r -> (r -> m a) -> m a
-runSignal (SignalT sf) f = sf f
+runSignal :: forall r m a. (Monad m) => SignalT r m a -> (a -> m r) -> m r
+runSignal (SignalT s) k = s k
 
 instance monadContSignalT :: Monad m => MonadCont (SignalT r m) where
-  callCC f = SignalT (\k -> runSignal (f (\a -> SignalT (\_ -> k a))) k)
+  callCC f = SignalT (\k -> case f (\a -> SignalT (\_ -> k a)) of SignalT f' -> f' k)
 
 instance functorSignal :: (Monad m) => Functor (SignalT r m) where
-  map f s = SignalT (\k -> runSignal s (\a -> k $ f a))
+  map f (SignalT s) = SignalT (\k -> s (\a -> k $ f a))
 
 instance applySignal :: (Functor m, Monad m) => Apply (SignalT r m) where
-  apply s t = SignalT (\k -> runSignal s $ (\f -> runSignal t (\a -> (k $ f a))))
+  apply (SignalT s) (SignalT t) = SignalT (\k -> s (\g -> t (\a -> k (g a))))
 
 instance applicativeSignal :: (Functor m, Monad m) => Applicative (SignalT r m) where
   pure a = SignalT (\k -> k a)
 
 instance bindSignal :: (Monad m) => Bind (SignalT r m) where
-  bind m k = SignalT (\k' -> runSignal m (\a -> runSignal (k a) k'))
+  bind (SignalT s) k = SignalT (\k' -> s (\a -> case k a of SignalT s' -> s' k'))
 
 instance monadSignal :: (Monad m) => Monad (SignalT r m)
 

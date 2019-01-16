@@ -3,6 +3,7 @@ module Signal
     Signal
   , SignalConstructor
   , SignalT(..)
+  , const
   , runSignal
   , module Control.Monad.Cont.Class
   ) where
@@ -24,9 +25,13 @@ newtype SignalT r m a = SignalT ((a -> m r) -> m r)
 type Signal a = SignalT Unit Effect a
 type SignalConstructor a = ((a -> Effect Unit) -> Effect Unit) -> Signal a
 
--- Runs a signal with a given callback function.
+-- | Runs a signal with a given callback function.
 runSignal :: forall r m a. (Monad m) => SignalT r m a -> (a -> m r) -> m r
 runSignal (SignalT s) k = s k
+
+-- | Creates a signal that emits a single value.
+const :: forall r m a. (Monad m) => a -> SignalT r m a
+const a = callCC \cont -> cont a
 
 instance monadContSignalT :: Monad m => MonadCont (SignalT r m) where
   callCC f = SignalT (\k -> case f (\a -> SignalT (\_ -> k a)) of SignalT f' -> f' k)

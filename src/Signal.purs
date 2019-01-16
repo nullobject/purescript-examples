@@ -5,6 +5,7 @@ module Signal
   , SignalT(..)
   , const
   , runSignal
+  , zip
   , module Control.Monad.Cont.Class
   ) where
 
@@ -12,6 +13,7 @@ import Prelude
 
 import Control.Monad.Cont.Class (class MonadCont, callCC)
 import Control.Monad.Trans.Class (class MonadTrans)
+import Data.Tuple (Tuple(..))
 import Effect (Effect)
 
 -- | This signal monad transformer.
@@ -32,6 +34,16 @@ runSignal (SignalT s) k = s k
 -- | Creates a signal that emits a single value.
 const :: forall r m a. (Monad m) => a -> SignalT r m a
 const a = callCC \cont -> cont a
+
+-- | Creates a signal that emits the corresponding values emitted by the given
+-- | signals.
+-- |
+-- | FIXME: It should wait for corresponding values before emitting a value.
+zip :: forall r m a b. (Monad m) => SignalT r m a -> SignalT r m b -> SignalT r m (Tuple a b)
+zip s t = do
+  a <- s
+  b <- t
+  pure (Tuple a b)
 
 instance monadContSignalT :: Monad m => MonadCont (SignalT r m) where
   callCC f = SignalT (\k -> case f (\a -> SignalT (\_ -> k a)) of SignalT f' -> f' k)

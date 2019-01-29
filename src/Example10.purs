@@ -1,6 +1,6 @@
 module Example10 where
 
-import Prelude (($), Unit)
+import Prelude (Unit)
 
 import Effect (Effect)
 import Effect.Console (logShow)
@@ -13,5 +13,4 @@ main = do
       t = const 2
       u = zip s t
 
-  runSignal u $ \n -> do
-    logShow n
+  runSignal u logShow

@@ -23,5 +23,4 @@ main = do
   let s = interval 1000
       t = scan (+) 1.0 s
 
-  runSignal t $ \n -> do
-    logShow n
+  runSignal t logShow
